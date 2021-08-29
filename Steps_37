@@ -1,5 +1,5 @@
 
-
+https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/docker/building-net-docker-images?view=aspnetcore-5.0 (IMP)
 1. create rhel 8 instance on aws
 
 2. install dot net SDK 5 with below commands
