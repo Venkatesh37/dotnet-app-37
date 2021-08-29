@@ -1,1 +1,62 @@
 
+
+1. create rhel 8 instance on aws
+
+2. install dot net SDK 5 with below commands
+   sudo dnf install dotnet-sdk-5.0 -y
+
+3. install the corresponding runtime with below commands
+   sudo dnf install aspnetcore-runtime-5.0 -y
+      
+4. Docker installations in rhel8
+   ===========================================
+   1. update the system with below commands
+      yum update -y
+   2.go to below path and make enabled=1 to enabled=0 (for disabling subsription manager errors/warnings)
+     vi /etc/yum/pluginconf.d/subscription-manager.conf
+   3.add docker repo with below commands
+     dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+   4.to check docker repos and to install docker rum below commands
+     dnf list docker-ce
+     dnf install docker-ce --nobest -y
+   5.start the docker with below commands
+     systemctl start docker
+   6.enable the docker with below commands
+     systemctl enable docker
+   7.check the status the docker with below commands
+     systemctl status docker
+   8.check docker version with below commands
+     docker --version
+5. create a folder and run below below commands for new dotnet project
+   dotnet new webapp -o aspnetdotcoreapp
+6. go to above aspnetdotcoreapp folder and create Dockerfile with below contents
+   Dockerfile   
+   =============================================================================
+   FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+   WORKDIR /app
+
+   # Copy csproj and restore as distinct layers
+   COPY *.csproj ./
+   RUN dotnet restore
+
+   # Copy everything else and build
+   COPY . ./
+   RUN dotnet publish -c Release -o out
+
+   # Build runtime image
+   FROM mcr.microsoft.com/dotnet/aspnet:5.0
+   WORKDIR /app
+   COPY --from=build-env /app/out .
+   ENTRYPOINT ["dotnet", "aspnetdotcoreapp.dll"]
+7. create the Docker images with below commands 
+   docker image build -t venkatesh37/aspdotnetapp
+8. run the Docker container by using above Docker images with below commands 
+   docker run --name=aspdotnetapp_37 -p 80:80 --detach venkatesh37/aspdotnetapp
+9. allow 80 port number in respective seurity group and llow the app in browser
+
+
+==================================================================
+docker pull mcr.microsoft.com/dotnet/sdk
+docker pull mcr.microsoft.com/dotnet/samples
+
+
